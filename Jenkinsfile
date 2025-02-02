@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'node:16-buster-slim'
-            args '-p 3000:3000'
+            image 'node:20-buster-slim'
+            args '--workdir=/app -p 3000:3000'
         }
     }
     stages {
