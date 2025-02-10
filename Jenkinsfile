@@ -3,9 +3,9 @@ node {
         git branch: 'react-app', url: 'https://github.com/Ziddma/a428-cicd-labs.git'
     }
 
-
     stage('Build') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+            sh 'npm install'
             sh 'npm run build'
         }
     }
@@ -33,12 +33,16 @@ node {
 
     stage('Deploy') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'npm run build'
-            sh 'npm start &'
+            sh 'npm install'
+            sh 'nohup npm start > app.log 2>&1 & echo $! > app.pid'
         }
+        
         script {
-            echo "Menjalankan aplikasi selama 1 menit sebelum pipeline berakhir..."
+            echo "Aplikasi berjalan di: http://localhost:3000"
+            echo "Silakan akses aplikasi selama 1 menit sebelum pipeline berakhir."
             sh 'sleep 60'
+            echo "Menghentikan aplikasi..."
+            sh 'pkill -F app.pid || echo "Proses tidak ditemukan, mungkin sudah berhenti."'
         }
     }
 }
