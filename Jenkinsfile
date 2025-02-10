@@ -33,16 +33,17 @@ node {
 
     stage('Deploy') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'npm install'
-            sh 'nohup npm start > app.log 2>&1 & echo $! > app.pid'
+            sh 'chmod +x ./jenkins/scripts/deliver.sh'
+            sh './jenkins/scripts/deliver.sh'
         }
-        
+
         script {
             echo "Aplikasi berjalan di: http://13.215.183.136:3000"
             echo "Silakan akses aplikasi selama 1 menit sebelum pipeline berakhir."
             sh 'sleep 60'
             echo "Menghentikan aplikasi..."
-            sh 'pkill -F app.pid || echo "Proses tidak ditemukan, mungkin sudah berhenti."'
+            sh 'chmod +x ./jenkins/scripts/kill.sh'
+            sh './jenkins/scripts/kill.sh'
         }
     }
 }
