@@ -1,8 +1,7 @@
 node {
     stage('Build') {
         docker.image('node:20-buster-slim').inside('-p 3000:3000') {
-            sh 'pwd'  // Debugging: Cek direktori kerja
-            sh 'ls -l'  // Debugging: Cek apakah package.json ada
+            sh 'git clone -b react-app https://github.com/Ziddma/a428-cicd-labs.git'
             sh 'cd app && npm install'
         }
     }
