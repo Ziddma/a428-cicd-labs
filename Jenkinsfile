@@ -38,7 +38,7 @@ node {
         }
         
         script {
-            echo "Aplikasi berjalan di: http://localhost:3000"
+            echo "Aplikasi berjalan di: http://13.215.183.136:3000"
             echo "Silakan akses aplikasi selama 1 menit sebelum pipeline berakhir."
             sh 'sleep 60'
             echo "Menghentikan aplikasi..."
