@@ -1,6 +1,8 @@
 node {
     stage('Build') {
         docker.image('node:20-buster-slim').inside('-p 3000:3000') {
+            sh 'pwd'  // Debugging: Cek direktori kerja
+            sh 'ls -l'  // Debugging: Cek apakah package.json ada
             sh 'cd app && npm install'
         }
     }
