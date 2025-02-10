@@ -5,13 +5,13 @@ node {
 
 
     stage('Build') {
-        docker.image('node:20-buster-slim').inside('-p 3000:3000') {
+        docker.image('node:18-buster-slim').inside('-p 3000:3000') {
             sh 'npm install'
         }
     }
 
     stage('Test') {
-        docker.image('node:20-buster-slim').inside('-p 3000:3000') {
+        docker.image('node:18-buster-slim').inside('-p 3000:3000') {
             sh 'chmod +x ./jenkins/scripts/test.sh'
             sh './jenkins/scripts/test.sh'
         }
@@ -32,7 +32,7 @@ node {
     }
 
     stage('Deploy') {
-        docker.image('node:20-buster-slim').inside('-p 3000:3000') {
+        docker.image('node:18-buster-slim').inside('-p 3000:3000') {
             sh 'npm run build'
             sh 'npm start &'
         }
