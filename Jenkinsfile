@@ -6,7 +6,7 @@ node {
 
     stage('Build') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'export NODE_OPTIONS=--openssl-legacy-provider && npm run build'
+            sh 'npm run build'
         }
     }
 
