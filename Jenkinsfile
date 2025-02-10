@@ -1,4 +1,9 @@
 node {
+    stage('Checkout Code') {
+        git branch: 'react-app', url: 'https://github.com/Ziddma/a428-cicd-labs.git'
+    }
+
+
     stage('Build') {
         docker.image('node:20-buster-slim').inside('-p 3000:3000') {
             sh 'git clone -b react-app https://github.com/Ziddma/a428-cicd-labs.git'
