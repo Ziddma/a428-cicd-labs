@@ -1,10 +1,12 @@
 import React from "react";
+import logo from "../img/dicoding-header-logo.png"; // Mengimpor gambar dari folder src/img
 
 function Header() {
   return (
     <header className="navbar-container">
       <div className="logo">
-        <img src="/src/img/dicoding-header-logo.png" alt="Dicoding Indonesia" />
+        {/* Menggunakan gambar yang diimpor */}
+        <img src={logo} alt="Dicoding Indonesia" />
       </div>
       <nav className="nav-list">
         <ul>

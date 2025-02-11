@@ -1,4 +1,5 @@
 import React from "react";
+import circleG from "../img/circle-g.jpg"; // Mengimpor gambar dari folder src/img
 
 function MainContent() {
   return (
@@ -15,7 +16,8 @@ function MainContent() {
           <button>Lebih lanjut</button>
         </div>
         <div className="content-image">
-          <img src="/src/img/circle-g.jpg" alt="Dicoding Indonesia" />
+          {/* Menggunakan gambar yang diimpor */}
+          <img src={circleG} alt="Dicoding Indonesia" />
         </div>
       </div>
     </main>
