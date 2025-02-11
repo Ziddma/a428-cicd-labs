@@ -19,16 +19,7 @@ node {
 
     stage('Manual Approval') {
         script {
-                // Menggunakan boolean parameter untuk dua tombol
-                def proceed = input(
-                    message: 'Lanjutkan ke tahap Deploy?',
-                    parameters: [
-                        description: 'Klik Proceed untuk melanjutkan atau Abort untuk menghentikan pipeline'
-                    ]
-                )
-                if (!proceed) {
-                    error("Pipeline dihentikan oleh pengguna.")
-            }
+            input message: 'Melanjutkan tahap deploy? (Klik "Proceed" untuk menlanjutkan)' 
         }
     }
 
