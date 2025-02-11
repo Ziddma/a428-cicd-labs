@@ -15,7 +15,7 @@ function MainContent() {
           <button>Lebih lanjut</button>
         </div>
         <div className="content-image">
-          <img src="src/img/circle-g.jpg" alt="Dicoding Indonesia" />
+          <img src="/src/img/circle-g.jpg" alt="Dicoding Indonesia" />
         </div>
       </div>
     </main>
