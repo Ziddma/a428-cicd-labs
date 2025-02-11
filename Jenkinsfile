@@ -1,49 +1,27 @@
-node {
-    stage('Checkout Code') {
-        git branch: 'react-app', url: 'https://github.com/Ziddma/a428-cicd-labs.git'
-    }
-
-    stage('Build') {
-        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'npm install'
-            sh 'npm run build'
+pipeline {
+    agent {
+        docker {
+            image 'node:16-buster-slim'
+            args '-p 3000:3000'
         }
     }
-
-    stage('Test') {
-        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'chmod +x ./jenkins/scripts/test.sh'
-            sh './jenkins/scripts/test.sh'
-        }
-    }
-
-    stage('Manual Approval') {
-        script {
-            def userInput = input(
-                message: 'Lanjutkan ke tahap Deploy?',
-                parameters: [
-                    choice(name: 'Approval', choices: ['Proceed', 'Abort'], description: 'Pilih apakah ingin melanjutkan atau tidak')
-                ]
-            )
-            if (userInput == 'Abort') {
-                error("Pipeline dihentikan oleh pengguna.")
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm install'
             }
         }
-    }
-
-    stage('Deploy') {
-        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            sh 'chmod +x ./jenkins/scripts/deliver.sh'
-            sh './jenkins/scripts/deliver.sh'
+        stage('Test') {
+            steps {
+                sh './jenkins/scripts/test.sh'
+            }
         }
-
-        script {
-            echo "Aplikasi berjalan di: http://13.215.183.136:3000"
-            echo "Silakan akses aplikasi selama 1 menit sebelum pipeline berakhir."
-            sh 'sleep 60'
-            echo "Menghentikan aplikasi..."
-            sh 'chmod +x ./jenkins/scripts/kill.sh'
-            sh './jenkins/scripts/kill.sh'
+        stage('Deploy') { 
+            steps {
+                sh './jenkins/scripts/deliver.sh' 
+                input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
+                sh './jenkins/scripts/kill.sh' 
+            }
         }
     }
 }
