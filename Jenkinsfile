@@ -1,29 +1,52 @@
-pipeline {
-    agent {
-        docker {
-            image 'node:16-buster-slim'
-            args '-p 3000:3000'
+node {
+    def isDeployApproved = false
+
+    stage('Build') {
+        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+            echo '🔧 Installing dependencies...'
+            sh 'npm install'
         }
     }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'npm install'
-            }
+
+    stage('Test') {
+        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+            echo '🧪 Running tests...'
+            sh 'chmod +x ./jenkins/scripts/test.sh'
+            sh './jenkins/scripts/test.sh'
         }
-        stage('Test') {
-            steps {
-                sh 'chmod +x ./jenkins/scripts/test.sh'
-                sh './jenkins/scripts/test.sh'
-            }
+    }
+
+    stage('Manual Approval') {
+        input message: 'Lanjutkan ke tahap Deploy?', parameters: [
+            choice(name: 'Proceed or Abort', choices: ['Proceed', 'Abort'], description: 'Click Proceed to deploy or Abort to stop.')
+        ]
+        
+        if (params.'Proceed or Abort' == 'Proceed') {
+            isDeployApproved = true
+            echo "Deploy Approved"
+        } else {
+            error "Pipeline Aborted"
         }
-        stage('Deploy') { 
-            steps {
-                sh 'chmod +x ./jenkins/scripts/deliver.sh'
-                sh './jenkins/scripts/deliver.sh' 
-                input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
-                sh './jenkins/scripts/kill.sh' 
-            }
+    }
+
+    stage('Deploy') {
+        when {
+            expression { isDeployApproved }
+        }
+        docker.image('node:16-buster-slim').inside('-p 3000:3000') {
+            echo '📦 Deploying application...'
+            sh 'chmod +x ./jenkins/scripts/deliver.sh'
+            sh './jenkins/scripts/deliver.sh'
+            
+            // Menjeda eksekusi selama 1 menit sebelum melanjutkan ke tahap berikutnya
+            echo '⏳ Waiting for 1 minute to let the React App run...'
+            sleep time: 1, unit: 'MINUTES'
+            
+            // Setelah 1 menit, aplikasi akan otomatis berhenti dan pipeline berhasil
+            echo '✅ React App has been running for 1 minute. Proceeding to complete pipeline.'
+            
+            // Jalankan script untuk menghentikan aplikasi
+            sh './jenkins/scripts/kill.sh'
         }
     }
 }
