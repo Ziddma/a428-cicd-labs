@@ -37,7 +37,7 @@ node {
             sh './jenkins/scripts/deliver.sh'
             sh 'sleep 60'
 
-            // Setelah 1 menit, aplikasi akan otomatis berhenti dan pipeline berhasil
+            // Setelah 1 menit
             echo 'React App has been running for 1 minute. Proceeding to complete pipeline.'
             sh 'chmod +x ./jenkins/scripts/kill.sh'
             sh './jenkins/scripts/kill.sh'
