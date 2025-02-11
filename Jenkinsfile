@@ -6,14 +6,12 @@ node {
 
     stage('Build') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            echo '🔧 Installing dependencies...'
             sh 'npm install'
         }
     }
 
     stage('Test') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            echo '🧪 Running tests...'
             sh 'chmod +x ./jenkins/scripts/test.sh'
             sh './jenkins/scripts/test.sh'
         }
@@ -35,21 +33,15 @@ node {
 
     stage('Deploy') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
-            echo '📦 Deploying application...'
             sh 'chmod +x ./jenkins/scripts/deliver.sh'
             sh './jenkins/scripts/deliver.sh'
-            
-            // Menjeda eksekusi selama 1 menit sebelum melanjutkan ke tahap berikutnya
-            echo '⏳ Waiting for 1 minute to let the React App run...'
-            sleep time: 1, unit: 'MINUTES'
-            
-            // Setelah 1 menit, aplikasi akan otomatis berhenti dan pipeline berhasil
-            echo '✅ React App has been running for 1 minute. Proceeding to complete pipeline.'
-            
-            // Jalankan script untuk menghentikan aplikasi
-            sh './jenkins/scripts/kill.sh'
-
             sh 'sleep 60'
+
+            // Setelah 1 menit, aplikasi akan otomatis berhenti dan pipeline berhasil
+            echo 'React App has been running for 1 minute. Proceeding to complete pipeline.'
+            sh 'chmod +x ./jenkins/scripts/kill.sh'
+            sh './jenkins/scripts/kill.sh'
+            
         }
     }
 }
