@@ -4,9 +4,6 @@ node {
         git branch: 'react-app', url: 'https://github.com/Ziddma/a428-cicd-labs.git'
     }
 
-
-    def isDeployApproved = false
-
     stage('Build') {
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
             echo '🔧 Installing dependencies...'
@@ -23,22 +20,20 @@ node {
     }
 
     stage('Manual Approval') {
-        input message: 'Lanjutkan ke tahap Deploy?', parameters: [
-            choice(name: 'Proceed or Abort', choices: ['Proceed', 'Abort'], description: 'Click Proceed to deploy or Abort to stop.')
-        ]
-        
-        if (params.'Proceed or Abort' == 'Proceed') {
-            isDeployApproved = true
-            echo "Deploy Approved"
-        } else {
-            error "Pipeline Aborted"
+        script {
+            def userInput = input(
+                message: 'Lanjutkan ke tahap Deploy?',
+                parameters: [
+                    choice(name: 'Approval', choices: ['Proceed', 'Abort'], description: 'Pilih apakah ingin melanjutkan atau tidak')
+                ]
+            )
+            if (userInput == 'Abort') {
+                error("Pipeline dihentikan oleh pengguna.")
+            }
         }
     }
 
     stage('Deploy') {
-        when {
-            expression { isDeployApproved }
-        }
         docker.image('node:16-buster-slim').inside('-p 3000:3000') {
             echo '📦 Deploying application...'
             sh 'chmod +x ./jenkins/scripts/deliver.sh'
@@ -53,6 +48,8 @@ node {
             
             // Jalankan script untuk menghentikan aplikasi
             sh './jenkins/scripts/kill.sh'
+
+            sh 'sleep 60'
         }
     }
 }
