@@ -23,7 +23,7 @@ node {
                 def proceed = input(
                     message: 'Lanjutkan ke tahap Deploy?',
                     parameters: [
-                        booleanParam(defaultValue: true, description: 'Klik Proceed untuk melanjutkan atau Abort untuk menghentikan pipeline', name: 'Proceed')
+                        booleanParam(defaultValue: true, description: 'Klik Proceed untuk melanjutkan atau Abort untuk menghentikan pipeline')
                     ]
                 )
                 if (!proceed) {
