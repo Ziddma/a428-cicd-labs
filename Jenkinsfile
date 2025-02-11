@@ -1,4 +1,10 @@
 node {
+
+    stage('Checkout Code') {
+        git branch: 'react-app', url: 'https://github.com/Ziddma/a428-cicd-labs.git'
+    }
+
+
     def isDeployApproved = false
 
     stage('Build') {
