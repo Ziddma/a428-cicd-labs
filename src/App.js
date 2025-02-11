@@ -12,7 +12,7 @@ const Header = () => {
   );
 };
 
-// Komponen tambahan untuk tombol interaktif
+// Komponen tombol interaktif
 class InteractiveButton extends Component {
   constructor(props) {
     super(props);
@@ -38,7 +38,7 @@ class InteractiveButton extends Component {
   }
 }
 
-// Komponen tambahan untuk footer
+// Komponen footer
 const Footer = () => {
   return (
     <div className="Footer">
