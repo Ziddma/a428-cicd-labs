@@ -1,40 +1,29 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-echo 'Deploying React application in Docker-in-Docker (DIND)...'
-
-# Membuat direktori untuk aplikasi di dalam container
-mkdir -p /home/jenkins/react-app
-
-# Menyalin seluruh kode aplikasi React ke dalam direktori yang tepat
-cp -r ./ /home/jenkins/react-app
-
-# Pindah ke dalam direktori aplikasi
-cd /home/jenkins/react-app
-
-# Instalasi dependensi dan build aplikasi React
-echo 'Instalasi dependensi aplikasi...'
-npm install
-
-echo 'Membangun aplikasi React untuk produksi...'
+echo 'The following "npm" command builds your Node.js/React application for'
+echo 'production in the local "build" directory (i.e. within the'
+echo '"/var/jenkins_home/workspace/simple-node-js-react-app" directory),'
+echo 'correctly bundles React in production mode and optimizes the build for'
+echo 'the best performance.'
+set -x
 npm run build
+set +x
 
-# Menjalankan aplikasi di background pada port 3000
-echo 'Menjalankan aplikasi React di background pada port 3000...'
-npm start -- --port 3000 &
+echo 'The following "npm" command runs your Node.js/React application in'
+echo 'development mode and makes the application available for web browsing.'
+echo 'The "npm start" command has a trailing ampersand so that the command runs'
+echo 'as a background process (i.e. asynchronously). Otherwise, this command'
+echo 'can pause running builds of CI/CD applications indefinitely. "npm start"'
+echo 'is followed by another command that retrieves the process ID (PID) value'
+echo 'of the previously run process (i.e. "npm start") and writes this value to'
+echo 'the file ".pidfile".'
+set -x
+npm start &
+sleep 1
+echo $! > .pidfile
+set +x
 
-# Mendapatkan PID aplikasi yang dijalankan
-APP_PID=$!
-
-# Memberikan waktu 1 menit agar aplikasi dapat diakses
-echo "Aplikasi berjalan di: http://13.215.183.136:3000"
-echo "Silakan akses aplikasi selama 1 menit sebelum pipeline berakhir."
-
-# Menunggu selama 1 menit agar aplikasi dapat diakses
-sleep 60
-
-# Menghentikan aplikasi yang berjalan
-echo "Menghentikan aplikasi..."
-pkill -f "npm start" || echo "Proses tidak ditemukan, mungkin sudah berhenti."
-
-# Menyelesaikan deploy
-echo "Deploy selesai!"
+echo 'Now...'
+echo 'Visit http://localhost:3000 to see your Node.js/React application in action.'
+echo '(This is why you specified the "args ''-p 3000:3000''" parameter when you'
+echo 'created your initial Pipeline as a Jenkinsfile.)'
